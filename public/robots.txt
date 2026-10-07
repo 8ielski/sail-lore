@@ -1,0 +1,4 @@
+# Review deploy — not the live site.
+# Remove this file when sail-lore ships for real.
+User-agent: *
+Disallow: /

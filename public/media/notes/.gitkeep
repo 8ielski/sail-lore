@@ -1,0 +1,2 @@
+Drop a note's photo here, named for its id — e.g. canvas.jpg, white-mirror.jpg.
+Then set `image` on that note in lib/content.ts. Until then it draws an SVG sail.

@@ -1,0 +1,588 @@
+"use client";
+
+import { useState } from "react";
+import { SITE, INTRO, LORE, SERIES, NOTES, GALLERY, WIND, CONTACT } from "@/lib/content";
+import { useReveal } from "@/lib/useReveal";
+import { useScrollRange, useSectionProgress } from "@/lib/useScrollRange";
+import { usePrefs } from "@/lib/prefs";
+import { useNotesUI } from "@/lib/notes-ui";
+import { NoteInPlace } from "./NoteView";
+import { SailGlyph, HeroSea, RIGS } from "./Sail";
+import { WindVector, windReadout } from "./WindVector";
+
+/* ─────────────────────────────────────────────────────────────────────────
+   ADAPTED FROM wolverine-sandbox/components/landing/Sections.tsx.
+   Every geometry value below is Wolverine's, measured live at 1512x863; only
+   the content and the drawn art are Sail Lore's.
+
+   Type scale carried over intact:
+     168px  hero display            (11.11vw)
+     128px  section h2              ( 8.47vw)   <- the lore definition
+      57px  large-card h2           ( 3.77vw)   <- the series card
+      33px  section h2 AND body     ( 2.18vw)   <- BOTH columns, 700
+   Page gutter 48px. Radius 12px (16px on the large card).
+   ───────────────────────────────────────────────────────────────────────── */
+
+const NAV = ["Notes", "Seasaurus", "Bio", "Services", "Contact"];
+
+/** Dictionary kicker, shared by the two definition sections. Headword stays
+ *  lowercase — that is how a dictionary sets it, and uppercasing it fights the
+ *  lowercase phonetic sitting between the caps. */
+function DefKicker({ word, pron, pos, note }: { word: string; pron: string; pos: string; note?: string }) {
+  return (
+    <p className="sl-mono text-grey">
+      <span className="lowercase text-ink">{word}</span>
+      {"  "}<span className="normal-case">{pron}</span>
+      {"  ·  "}<span className="lowercase">{pos}</span>
+      {note && <>{"  ·  "}<span className="lowercase">{note}</span></>}
+    </p>
+  );
+}
+
+/** Wolverine `.c-header` — fixed, full width, h82, collapses to a 620px pill. */
+export function Header() {
+  const p = useScrollRange(80, 400);
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 h-[82px]">
+      <div
+        className="mx-auto flex h-full items-center justify-between transition-all duration-500 ease-out"
+        style={{
+          width: `calc(100% - ${96 - p * 96 * 0.72}px)`,
+          maxWidth: p > 0.5 ? 620 : 1416,
+          borderRadius: 12,
+          background: `rgba(7,13,18,${p * 0.92})`,
+          backdropFilter: p > 0.1 ? "blur(12px)" : "none",
+          marginTop: p * 14,
+          height: p > 0.5 ? 48 : 82,
+          paddingLeft: 16 + (1 - p) * 8,
+          paddingRight: 16,
+        }}
+      >
+        <a href="#top" className="flex items-center gap-2.5 text-paper">
+          <SailGlyph className="size-[19px] shrink-0" />
+          {p < 0.5 && (
+            <span className="whitespace-nowrap text-[13px] font-bold tracking-[0.14em]">SAIL LORE</span>
+          )}
+        </a>
+        {/* The measured desktop row can't fit a 390px phone, so it collapses
+            to a menu affordance below md. (Playbook §4b) */}
+        <nav className="hidden items-center gap-7 md:flex">
+          {NAV.map((n) => (
+            <a key={n} href={`#${n.toLowerCase()}`} className="whitespace-nowrap text-[15px] text-paper hover:opacity-70">
+              {n}
+            </a>
+          ))}
+        </nav>
+        <button aria-label="Open menu" className="flex flex-col gap-[4px] p-2 md:hidden">
+          <span className="block h-[2px] w-[22px] bg-paper" />
+          <span className="block h-[2px] w-[22px] bg-paper" />
+          <span className="block h-[2px] w-[22px] bg-paper" />
+        </button>
+      </div>
+    </header>
+  );
+}
+
+/** Hero: inset 8px, full-bleed ground, headline l48 bottom, card 280x301 r12. */
+export function Hero() {
+  const { open } = useNotesUI();
+  // "Newest" is mechanical: it surfaced ZAFL Skills, which is the least legible
+  // door into the work for a stranger, and printed that title on the page four
+  // times. An editor's pick, with newest as the fallback.
+  const featured = NOTES.find((n) => n.featured) ?? NOTES[NOTES.length - 1];
+  return (
+    <section id="top" className="relative m-2 h-[calc(101svh-1rem)] overflow-hidden rounded-[12px] bg-abyss">
+      {SITE.hero ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={SITE.hero} alt="" className="absolute inset-0 size-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-abyss/90 via-abyss/40 to-abyss/60" />
+        </>
+      ) : (
+        <HeroSea className="absolute inset-0 size-full object-cover" />
+      )}
+
+      {/* Was SITE.tagline — the identical words as the h1 below it. The page's
+          most valuable small type now carries the series and the count, which
+          is what "& Building" wants above the fold. */}
+      <span className="sl-mono absolute left-5 top-[110px] text-paper/60 md:left-10">
+        {SITE.kicker} · {NOTES.length} and counting
+      </span>
+
+      <h1 className="sl-display absolute bottom-[42%] left-5 text-paper md:bottom-[14%] md:left-10">
+        {SITE.display.map((l) => (
+          <span key={l} className="block">{l}</span>
+        ))}
+      </h1>
+
+      {/* the floating card — bottom right, 280x301 */}
+      <button
+        type="button"
+        onClick={() => open(featured.id)}
+        className="absolute inset-x-5 bottom-[4%] cursor-pointer overflow-hidden rounded-[12px] bg-white/10 p-2 text-left text-paper backdrop-blur-md transition-colors hover:bg-white/[0.16] md:inset-x-auto md:bottom-[6%] md:right-10 md:w-[280px]"
+      >
+        <span className="flex h-[187px] w-full items-center justify-center rounded-[8px] bg-abyss/70">
+          <SailGlyph className="size-[92px] text-paper/85" />
+        </span>
+        <span className="sl-mono mt-4 block px-1 text-paper/70">Start here</span>
+        <span className="mt-2 flex items-end justify-between gap-3 px-1 pb-2">
+          <span className="text-[20px] font-bold leading-[1.15] tracking-[-0.03em]">{featured.title}</span>
+          <span aria-hidden className="pb-1 text-[13px]">↗</span>
+        </span>
+      </button>
+    </section>
+  );
+}
+
+/** Wolverine two-column: h2 l48 w698 33px/700 · body l766 w578 ALSO 33px/700. */
+export function Intro() {
+  const { ref, hidden } = useReveal<HTMLDivElement>(0.2);
+  return (
+    <section id="bio" className="px-5 py-[9vh] md:px-12">
+      <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
+        <div className="max-w-[698px]">
+          {/* Greeting demoted from section heading to kicker: his warmth
+              survives, it just stops out-shouting the hero's promise. */}
+          <p className="sl-mono text-grey">
+            {INTRO.kicker} <span aria-hidden className="opacity-60 [filter:grayscale(1)]">👋🏻</span>
+          </p>
+          <h2 className="sl-h33 mt-5 text-ink">
+            {INTRO.headingLines.map((l) => (
+              <span key={l} className="block">{l}</span>
+            ))}
+          </h2>
+        </div>
+
+        <div className="max-w-[578px]">
+          {/* 22px, not the template's 33px: both columns at 33/700 works for
+              Wolverine because both are statements. This is a bio. */}
+          <p className="text-[clamp(17px,1.5vw,23px)] leading-[1.4] tracking-[-0.01em] text-ink">{INTRO.body}</p>
+
+          <dl className="mt-10 grid gap-x-8 gap-y-1 sm:grid-cols-2">
+            {INTRO.wayfinding.map((w) => (
+              <a
+                key={w.label}
+                href={w.href}
+                {...(w.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                className="group border-t border-black/10 py-3 outline-none"
+              >
+                <dt className="flex items-baseline gap-1.5 text-[15px] font-bold text-ink underline-offset-4 group-hover:underline group-focus-visible:underline">
+                  {w.label}
+                  <span aria-hidden className="text-[11px] text-grey">{w.external ? "↗" : "↓"}</span>
+                </dt>
+                <dd className="mt-1 text-[15px] leading-[1.45] text-grey">{w.note}</dd>
+              </a>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The definition — Wolverine's ImageGalaxy, exactly.
+ * h2 centred at 1017px wide, 128px, 3 staggered lines. A field of 114x114
+ * tiles scattered behind it drifts up and fades on scroll (A) or holds a
+ * strict grid (B). Their photographs, our drawn sails.
+ */
+// Kept clear of the section edges (10-92%) so the field stops leaking
+// into the intro above it.
+const SCATTER = [
+  [6, 14], [20, 26], [10, 42], [4, 62], [14, 78], [26, 88], [34, 18], [46, 32],
+  [40, 68], [52, 84], [60, 6], [68, 26], [58, 46], [72, 58], [64, 74], [78, 88],
+  [86, 20], [92, 36], [82, 54], [96, 70], [88, 90], [30, 56], [50, 12], [74, 42],
+];
+
+export function LoreDefinition() {
+  const { index } = usePrefs();
+  const p = useScrollRange(900, 2500);
+  const { ref, hidden } = useReveal<HTMLDivElement>(0.1);
+
+  return (
+    <section className="relative overflow-hidden py-[10vh]">
+      {index === "rail" ? (
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          {SCATTER.map(([x, y], i) => (
+            GALLERY.length ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={i}
+                src={GALLERY[i % GALLERY.length]}
+                alt=""
+                className="absolute size-[114px] object-cover"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: `translate(-50%,-50%) translateY(${-p * 260}px) scale(1.1)`,
+                  opacity: Math.max(0, 1 - p * 1.5),
+                }}
+              />
+            ) : (
+              <SailGlyph
+                key={i}
+                rig={RIGS[i % RIGS.length]}
+                className="absolute size-[114px] text-ink"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: `translate(-50%,-50%) translateY(${-p * 260}px) scale(1.1)`,
+                  opacity: Math.max(0, 1 - p * 1.5) * 0.09,
+                }}
+              />
+            )
+          ))}
+        </div>
+      ) : (
+        <div className="mx-auto mb-10 flex max-w-[1416px] flex-wrap justify-center gap-2 px-5 md:px-12">
+          {SCATTER.map((_, i) =>
+            GALLERY.length ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src={GALLERY[i % GALLERY.length]} alt="" className="size-[114px] object-cover" />
+            ) : (
+              <SailGlyph key={i} rig={RIGS[i % RIGS.length]} className="size-[114px] text-ink/[0.07]" />
+            ),
+          )}
+        </div>
+      )}
+
+      <div ref={ref} data-hidden={hidden} className="sl-reveal relative mx-auto w-[1017px] max-w-[90vw]">
+        <div className="mb-6">
+          <DefKicker word={LORE.word} pron={LORE.pron} pos={LORE.pos} note={LORE.displayNote} />
+        </div>
+        {/* Wolverine's wedge only resolves if the lines SHORTEN as they indent
+            ("A portfolio / built for every / step."). The first pass staggered
+            four lines that got longer, so the shape ran off the right edge and
+            never closed. This copy tapers and ends on one word. */}
+        <h2 className="sl-h2 whitespace-nowrap text-ink">
+          {LORE.display.map((l, i) => (
+            <span key={l} className="block" style={{ paddingLeft: ["0%", "20%", "38%"][i] }}>{l}</span>
+          ))}
+        </h2>
+
+        <div className="mt-14 max-w-[620px] border-t border-black/10 pt-6">
+          <p className="sl-mono mb-4 text-grey">also</p>
+          <ol className="space-y-3">
+            {LORE.senses.map((sense, i) => (
+              <li key={sense} className="flex gap-4 text-[15px] leading-[1.5] text-ink">
+                <span className="sl-mono shrink-0 pt-[3px] text-grey">{i + 1}</span>
+                <span>{sense}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 text-[15px] leading-[1.5] text-grey">{LORE.etymology}</p>
+
+          {/* His own link, dropped in the first pass. Without it the section
+              defines the word the site is named after and then dead-ends. */}
+          <a href={LORE.more.href} target="_blank" rel="noreferrer"
+             className="mt-8 inline-flex items-baseline gap-2 text-[15px] text-ink underline underline-offset-4">
+            {LORE.more.label} <span className="text-grey">— {LORE.more.note}</span> <span aria-hidden className="text-[11px]">↗</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Scroll is boat speed.
+ *
+ * A 200svh section with a sticky viewport inside it: the extra 100svh is the
+ * runway, and progress across it drives the boat. The true wind never moves,
+ * which is the entire point — the reader is not told that moving distorts the
+ * reading, they do it with their own scroll wheel.
+ */
+export function ApparentWind() {
+  const { ref, p } = useSectionProgress<HTMLElement>();
+  const r = windReadout(p * WIND.MAX_BOAT);
+  const row = "flex items-baseline justify-between gap-6 border-b border-black/10 py-2.5";
+
+  return (
+    <section ref={ref} className="relative h-[200svh]">
+      <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+        <div className="mx-auto grid w-full max-w-[1416px] items-center gap-10 px-5 md:px-12 lg:grid-cols-2">
+          <div>
+            <DefKicker word={WIND.word} pron={WIND.pron} pos={WIND.pos} />
+            <h2 className="sl-h33 mt-5 text-ink">{WIND.heading}</h2>
+            {WIND.body.map((t) => (
+              <p key={t.slice(0, 20)} className="mt-5 max-w-[46ch] text-[15px] leading-[1.5] text-grey">{t}</p>
+            ))}
+
+            <dl className="mt-8 max-w-[420px]">
+              <div className={row}>
+                <dt className="sl-mono text-grey">True</dt>
+                <dd className="sl-mono text-grey">
+                  {WIND.TRUE_WIND.toFixed(1)} kt · {String(WIND.TRUE_ANGLE).padStart(3, "0")}°
+                </dd>
+              </div>
+              <div className={row}>
+                <dt className="sl-mono text-ink">Apparent</dt>
+                {/* Every displayed number is rounded — raw float math leaks
+                    artifacts like 16.970562748477143 straight onto the page. */}
+                <dd className="sl-mono text-ink">
+                  {r.magnitude.toFixed(1)} kt · {String(Math.round(r.angle)).padStart(3, "0")}°
+                </dd>
+              </div>
+              <div className={row}>
+                <dt className="sl-mono text-grey">Divergence</dt>
+                <dd className="sl-mono text-ink">{Math.round(r.divergence)}°</dd>
+              </div>
+            </dl>
+
+            <p className="mt-6 max-w-[46ch] text-[15px] leading-[1.5] text-grey">
+              {r.divergence < 2 ? WIND.cue : WIND.payoff}
+            </p>
+          </div>
+
+          <WindVector speed={r.speed} className="w-full max-w-[520px] justify-self-center" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The series card — Wolverine's LargeCard.
+ * Square panel left (763x763), h2 57px right, 232px copy column bottom-left,
+ * nested 305x144 r16 CTA card bottom-right.
+ */
+export function SeriesCard() {
+  const { ref, hidden } = useReveal<HTMLDivElement>(0.15);
+  return (
+    <section className="px-4 py-[6vh]">
+      <div ref={ref} data-hidden={hidden} className="sl-reveal relative overflow-hidden rounded-[16px] bg-abyss text-paper">
+        <div className="grid lg:grid-cols-[763fr_749fr]">
+          <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-abyss">
+            <SailGlyph className="size-[58%] text-paper/15" />
+            <blockquote className="absolute inset-x-6 bottom-6 md:inset-x-10 md:bottom-10">
+              <p className="sl-h57">{`“${SERIES.epigraph.text}”`}</p>
+              <footer className="sl-mono mt-4 text-paper/60">{SERIES.epigraph.who}</footer>
+            </blockquote>
+          </div>
+
+          <div className="relative flex flex-col p-5 md:p-10">
+            <span className="sl-mono text-paper/60">About the series</span>
+            <h2 className="sl-h57 mt-4">
+              {NOTES.length}
+              <span className="align-super text-[0.35em]">*</span> Notes
+              <br />
+              Apparent—& Building
+            </h2>
+            <div className="mt-8 space-y-4 lg:mt-auto">
+              {SERIES.about.map((t) => (
+                <p key={t.slice(0, 24)} className="max-w-[46ch] text-[15px] leading-[1.5] text-paper/85">{t}</p>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap items-end gap-4">
+              {SERIES.siblings.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-[144px] w-full max-w-[305px] shrink-0 flex-col justify-between rounded-[16px] bg-white/10 p-5 transition-colors hover:bg-white/[0.16] md:w-[305px]"
+                >
+                  <span className="sl-mono text-paper/70">Cross-fertilized with</span>
+                  <span className="flex items-end justify-between gap-3">
+                    <span className="text-[20px] font-bold tracking-[-0.02em]">{s.name}</span>
+                    <span aria-hidden className="pb-1 text-[13px]">↗</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+            <p className="sl-mono mt-6 text-paper/50">{SERIES.countNote}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Second two-column block — both columns 33px/700, same as the first. */
+export function Audience() {
+  const { ref, hidden } = useReveal<HTMLDivElement>(0.2);
+  return (
+    <section className="px-5 py-[9vh] md:px-12">
+      <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
+        <h2 className="sl-h33 max-w-[698px] text-ink">
+          <span className="block">Written for sailors,</span>
+          <span className="block">open to landlubbers.</span>
+        </h2>
+        <div className="max-w-[578px] space-y-6">
+          <p className="sl-h33 text-ink">{SERIES.audience[0]}</p>
+          {SERIES.audience.slice(1).map((t) => (
+            <p key={t.slice(0, 24)} className="text-[15px] leading-[1.5] text-grey">{t}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Wolverine's MarketSnapshot: label left 33px, the big 128px figure right. */
+export function Tally() {
+  const { ref, hidden } = useReveal<HTMLDivElement>(0.2);
+  const domains = Array.from(new Set(NOTES.flatMap((n) => n.domains)));
+  const cells: [string, string][] = [
+    ["Newest", NOTES[NOTES.length - 1].title],
+    ["In draft", String(NOTES.filter((n) => n.draft).length)],
+    ["Lore domains", String(domains.length)],
+    ["Series", "Ongoing"],
+  ];
+  return (
+    <section className="border-t border-black/10 px-5 py-[7vh] md:px-12">
+      <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
+        <div>
+          <h2 className="sl-h33 text-ink">The wind is building.</h2>
+          <a href="#notes" className="mt-6 inline-flex items-center gap-2 text-[15px] text-ink underline underline-offset-4">
+            Read the notes <span aria-hidden>↓</span>
+          </a>
+        </div>
+        <div>
+          <div className="flex items-baseline justify-between border-b border-black/10 pb-4">
+            <span className="text-[15px] text-ink">{SERIES.title}</span>
+            <span className="text-[15px] text-grey">{SITE.author}</span>
+          </div>
+          <p className="sl-mono mt-10 text-right text-grey">Notes published</p>
+          <p className="mt-2 text-right text-[clamp(56px,8.47vw,152px)] font-bold leading-[0.79] tracking-[-0.05em] text-ink">
+            {NOTES.length}
+          </p>
+          <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-black/10 pt-6 lg:grid-cols-4">
+            {cells.map(([k, v]) => (
+              <div key={k}>
+                <dt className="sl-mono text-grey">{k}</dt>
+                <dd className="mt-1 text-[15px] font-bold text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The notes index — Wolverine's NewsCarousel.
+ * A: 3-up rail with Prev./Next (measured 3-up at md+, 1-up on phones).
+ * B: exposed grid, every note visible at once.
+ *
+ * Cards carry `data-note-id`. The detail POPUP slice hooks onto that: the
+ * full body already lives in lib/content.ts, so opening one costs no request.
+ */
+export function NotesIndex() {
+  const { index } = usePrefs();
+  const { open, openId } = useNotesUI();
+  const [i, setI] = useState(0);
+  const max = Math.max(0, NOTES.length - 3);
+
+  // A real <button>, not a div with onClick: these are the only interactive
+  // elements on the page and they must be reachable by keyboard.
+  const Card = ({ n, idx }: { n: (typeof NOTES)[number]; idx: number }) => (
+    <button
+      type="button"
+      data-note-id={n.id}
+      onClick={() => open(n.id)}
+      aria-expanded={openId === n.id}
+      className="group block w-full cursor-pointer text-left outline-none"
+    >
+      <span className="relative flex aspect-[900/676] w-full items-center justify-center overflow-hidden rounded-[12px] bg-abyss ring-ink/60 transition-shadow group-focus-visible:ring-2">
+        {n.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={n.image} alt="" className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        ) : (
+          <SailGlyph className="size-[38%] text-paper/20 transition-transform duration-500 group-hover:scale-110" />
+        )}
+        <span className="sl-mono absolute left-4 top-4 text-paper/50">{String(idx + 1).padStart(2, "0")}</span>
+        <span aria-hidden className="absolute right-4 top-4 text-[22px] leading-none opacity-60 [filter:grayscale(1)]">{n.glyph}</span>
+        {n.draft && (
+          <span className="sl-mono absolute bottom-4 left-4 rounded-full bg-paper/15 px-2.5 py-1 text-paper/80">Draft</span>
+        )}
+        <span className="sl-mono absolute bottom-4 right-4 translate-y-1 rounded-full bg-paper/15 px-2.5 py-1 text-paper opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+          Read ↗
+        </span>
+      </span>
+      <span className="mt-4 block text-[15px] font-bold text-ink underline-offset-4 group-hover:underline">{n.title}</span>
+      <span className="mt-2 block text-[15px] leading-[1.45] text-grey">{n.dek}</span>
+      <span className="sl-mono mt-3 block text-grey">{n.domains.join(" · ")}</span>
+    </button>
+  );
+
+  return (
+    <section id="notes" className="overflow-hidden px-5 py-[7vh] md:px-12">
+      <div className="flex flex-wrap items-baseline justify-between gap-4">
+        <h2 className="sl-h33 text-ink">The (k)notes</h2>
+        {index === "rail" && (
+          <div className="flex items-center gap-4">
+            <button type="button" onClick={() => setI((v) => Math.max(0, v - 1))} disabled={i === 0}
+                    className="text-[15px] text-ink disabled:opacity-30">Prev.</button>
+            <button type="button" onClick={() => setI((v) => Math.min(max, v + 1))} disabled={i >= max}
+                    className="text-[15px] text-ink disabled:opacity-30">Next</button>
+          </div>
+        )}
+      </div>
+
+      {index === "rail" ? (
+        <div className="mt-10 flex gap-6 transition-transform duration-500 ease-out [--cardW:100%] md:[--cardW:33.333%]"
+             style={{ transform: `translateX(calc(${-i} * (var(--cardW) + 1.5rem)))` }}>
+          {NOTES.map((n, idx) => (
+            <div key={n.id} className="w-[calc(var(--cardW)-1rem)] shrink-0">
+              <Card n={n} idx={idx} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {NOTES.map((n, idx) => <Card key={n.id} n={n} idx={idx} />)}
+        </div>
+      )}
+
+      {/* The "in place" treatment renders here, inside the section. The three
+          overlay treatments render from the shell instead. */}
+      <NoteInPlace />
+    </section>
+  );
+}
+
+/** Wolverine's Push — 117svh media panel, headline bottom-left, CTA below. */
+export function Connect() {
+  return (
+    <section id="contact" className="relative m-2 h-[117svh] overflow-hidden rounded-[12px]">
+      <HeroSea className="absolute inset-0 size-full object-cover" />
+      <div className="absolute inset-0 bg-black/45" />
+      <div className="relative flex h-full flex-col justify-end p-5 md:p-12">
+        <span className="sl-mono mb-8 text-paper/60">{CONTACT.services.join("  |  ")}</span>
+        <h2 className="sl-h2 max-w-[14ch] text-paper">{CONTACT.heading}</h2>
+
+        <dl className="mt-10 grid max-w-[900px] gap-6 sm:grid-cols-3">
+          {CONTACT.phones.map((p) => (
+            <div key={p.value}>
+              <dt className="sl-mono text-paper/60">{p.flag} {p.label}</dt>
+              <dd className="mt-1 text-[15px] font-bold text-paper">{p.value}</dd>
+            </div>
+          ))}
+          <div>
+            <dt className="sl-mono text-paper/60">Email</dt>
+            <dd className="mt-1 text-[15px] font-bold text-paper">
+              <a href={`mailto:${CONTACT.email}`} className="underline underline-offset-4">{CONTACT.email}</a>
+            </dd>
+          </div>
+        </dl>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <a href={`mailto:${CONTACT.email}`} className="inline-flex w-fit items-center gap-3 rounded-[12px] bg-paper px-6 py-3.5 text-[15px] text-ink">
+            Get in touch <span aria-hidden>↗</span>
+          </a>
+          {CONTACT.social.map((s) => (
+            <a key={s.label} href={s.href} target="_blank" rel="noreferrer"
+               className="inline-flex w-fit items-center gap-3 rounded-[12px] bg-white/15 px-6 py-3.5 text-[15px] text-paper backdrop-blur-sm">
+              {s.label} <span aria-hidden>↗</span>
+            </a>
+          ))}
+        </div>
+
+        <p className="mt-10 max-w-[70ch] text-[15px] leading-[1.5] text-paper/70">{CONTACT.references}</p>
+        <p className="mt-2 max-w-[70ch] text-[15px] leading-[1.5] text-paper/70">{CONTACT.conflict}</p>
+      </div>
+    </section>
+  );
+}

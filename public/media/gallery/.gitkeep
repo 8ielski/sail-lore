@@ -1,0 +1,2 @@
+Drop the tiles that scatter behind the "lore" definition here (any count,
+roughly square). Then list them in GALLERY in lib/content.ts.

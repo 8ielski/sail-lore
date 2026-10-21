@@ -2,7 +2,7 @@
 
 ## Current preparation
 
-Prepared for `https://sail-lore.com/`, using the existing Cloudflare Pages project.
+Prepared for `https://sail-lore.com/`, using the existing Cloudflare Pages project, `sail-lore`. GitHub deployment checks identify this project; `sail-lore-review` is the older preview hostname.
 No DNS, custom-domain, Notion publishing, or email settings have been changed.
 The preview remains the review location until the custom domain is connected.
 
@@ -22,7 +22,7 @@ Changes:
 - Sitemap: 13 distinct main-domain URLs checked.
 - Exported Cloudflare configuration and local redirect destinations checked. Cloudflare's actual redirect/header processing still needs verification on a deployed branch.
 - Chromium browser at 390 × 844: mobile menu opens, links are present, Contact navigation closes the menu, Escape closes it and restores button focus. Desktop navigation and direct article entry also checked, with no browser JavaScript errors. This is a browser check at iPhone dimensions, not a physical iPhone/Safari test.
-- 18 external URLs returned HTTP 200, including all 15 Notion destinations, LinkedIn, and both related-project sites. HTTP 200 confirms a response; Notion's application may still require a signed-out browser check to confirm the actual content is public.
+- 18 external URLs returned HTTP 200, including all 15 Notion destinations, LinkedIn, and both related-project sites. HTTP 200 confirms a response. Subsequent anonymous-browser checks are recorded below.
 - Twitter could not be verified: proxy CONNECT returned 403. This does not establish a broken Twitter link.
 - Current `sail-lore.com` homepage, robots.txt, sitemap.xml, and Pages preview returned HTTP 403 to automated requests. Therefore the existing site's full URL inventory and the live deployment headers could not be inspected.
 
@@ -45,3 +45,12 @@ Changes:
 ## Rollback
 
 Before the switch, record the existing website DNS record(s) and Notion domain settings. If launch fails, restore those website records while investigating. Keep the Notion content published and preserve all email records throughout.
+
+## Follow-up verification
+
+- GitHub reports the launch commit's **Cloudflare Pages** deployment succeeded under project `sail-lore`; its branch URL is https://prepare-domain-launch.sail-lore.pages.dev/.
+- A separate **Workers Builds: sail-lore** check failed. This is distinct from the successful Pages deployment. Do not use the Workers check as the Pages launch result; the duplicate integration can be reviewed separately.
+- Preview indexing rules now use Cloudflare's documented generic `:project.pages.dev` and `:branch.:project.pages.dev` patterns to cover both old and actual project names.
+- **Anonymous-browser Notion verification: passed.** A fresh Chromium context with no Notion login rendered the actual Bio, Sample Services, and Seasaurus page titles and body content. Network requests used the session proxy and configured CA trust. Nonessential images/telemetry were blocked in this environment, but the page text rendered.
+- **Live Pages headers/redirect verification: blocked.** The network proxy denied CONNECT to the actual branch hostname. Required hosts were saved in the environment draft, but runtime access has not been confirmed. Apply the saved network settings and retry; do not label this check passed based solely on build success.
+- The launch branch's corrected `_headers` file was rebuilt successfully and copied into `out/_headers` before committing.

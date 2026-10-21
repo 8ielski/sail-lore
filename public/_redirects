@@ -1,6 +1,10 @@
 # Preserve known Notion-style paths when sail-lore.com switches to Pages.
 # Article paths lead to the local article; other pages remain on Notion.
 # Exact source paths and bare page IDs are taken from lib/content.ts.
+# The old homepage was observed as the destination of sail-lore.com.
+/Sail-Lore-Deepen-the-sailor-within-7b6f80db840c4136b683ef9b22908d31 / 301
+/7b6f80db840c4136b683ef9b22908d31 / 301
+/p/7b6f80db840c4136b683ef9b22908d31 / 301
 /35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301
 /Affordable-Loss-Spintrepreneurship-35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301
 /p/35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301

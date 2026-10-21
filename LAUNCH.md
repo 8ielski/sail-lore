@@ -10,7 +10,7 @@ Changes:
 - Homepage and all 12 article pages declare their own preferred (canonical) main-domain URL.
 - Main-domain pages permit indexing. `robots.txt` references a 13-URL sitemap.
 - `public/_headers` excludes the existing Pages hostname and its branch/deployment subdomains from indexing using `X-Robots-Tag: noindex, nofollow`. This follows Cloudflare's documented host-specific header syntax; confirm actual response headers after deployment. Do not remove this file when connecting the custom domain.
-- `public/_redirects` preserves 44 exact legacy Notion paths/IDs known from `lib/content.ts`. Article paths redirect to the corresponding local article; Bio, Sample Services, and Seasaurus remain on `bielski.notion.site`.
+- `public/_redirects` preserves 44 exact legacy Notion paths/IDs known from `lib/content.ts`, plus three formats of the old homepage address observed during launch. Article paths redirect to the corresponding local article; Bio, Sample Services, and Seasaurus remain on `bielski.notion.site`.
 - Desktop Seasaurus and Services links now point to their actual Notion destinations instead of nonexistent section fragments.
 - The mobile menu opens/closes, closes after selection or Escape, and returns focus to its button after Escape.
 
@@ -37,6 +37,7 @@ Changes:
 ## Domain switch (separate action)
 
 1. In the existing Pages project, use Custom domains → Set up a custom domain for `sail-lore.com`. Use Cloudflare's setup flow to replace the existing website record. Do not change MX, SPF, DKIM, DMARC, or unrelated DNS records.
+   Both root and www were observed forwarding to the old Notion homepage. Inspect existing Redirect Rules/Page Rules and disable any forwarding rule that sends these domains to Notion when switching. Connecting a Pages domain alone does not override an account/zone redirect rule.
 2. Decide on `www`: connect it and configure a redirect to `https://sail-lore.com`, or keep it unused deliberately. Do not leave it pointing at the old site. Cloudflare's account redirect settings can perform this redirect.
 3. Wait for the custom domain and certificate to become active.
 4. Verify homepage, all articles, mobile navigation, email link, the three Notion links, robots.txt, sitemap.xml, and sample legacy redirects over HTTPS. Confirm the main domain has no `noindex` response header while Pages hosts do.

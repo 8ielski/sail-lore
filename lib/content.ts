@@ -44,7 +44,7 @@ export const SITE = {
  * which was set as 15px caption text inside the wayfinding grid.
  */
 export const INTRO = {
-  kicker: "Ahoy! Welcome to my little site",
+  kicker: "Welcome to Sail Lore",
   headingLines: ["How sail knowledge", "leads to", "self-knowledge."],
 
   /**
@@ -475,25 +475,11 @@ export const NOTES: Note[] = [
 export const CONTACT = {
   heading: "Partnering? I’d love to talk.",
   services: ["Boat Sitting", "Deliveries", "Coaching", "Teaching"],
-  phones: [
-    { flag: "🇲🇽", label: "MX-Cel", value: "+52 322 322 1790" },
-    { flag: "🇺🇸", label: "US / WhatsApp", value: "+1 424 243 5754" },
-  ],
   email: "stefan@sail-lore.com",
   social: [
     { label: "LinkedIn", href: "https://www.linkedin.com/company/sail-lore/" },
     { label: "Twitter", href: "https://twitter.com/stefanbielski" },
   ],
-  /**
-   * OPEN QUESTION — the Sail Lore LinkedIn company page lists a THIRD phone
-   * number (Annapolis) alongside the two below. Three numbers across two
-   * properties; they need reconciling before either goes live.
-   *
-   * The digits are deliberately NOT in this file. The two below are already
-   * published on sail-lore.com, so they add no exposure here — the LinkedIn
-   * one is behind a login, and a public repo is the single most scraped place
-   * on the internet to put a phone number. It is in the LinkedIn admin.
-   */
   references: "References (local and relevant): available upon request.",
   conflict:
     "Conflict statement: I receive no commissions, referral fees, nor have any financial interest in any related industry.",

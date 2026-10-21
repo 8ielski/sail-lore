@@ -553,13 +553,7 @@ export function Connect() {
         <span className="sl-mono mb-8 text-paper/60">{CONTACT.services.join("  |  ")}</span>
         <h2 className="sl-h2 max-w-[14ch] text-paper">{CONTACT.heading}</h2>
 
-        <dl className="mt-10 grid max-w-[900px] gap-6 sm:grid-cols-3">
-          {CONTACT.phones.map((p) => (
-            <div key={p.value}>
-              <dt className="sl-mono text-paper/60">{p.flag} {p.label}</dt>
-              <dd className="mt-1 text-[15px] font-bold text-paper">{p.value}</dd>
-            </div>
-          ))}
+        <dl className="mt-10">
           <div>
             <dt className="sl-mono text-paper/60">Email</dt>
             <dd className="mt-1 text-[15px] font-bold text-paper">

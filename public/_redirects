@@ -1,0 +1,47 @@
+# Preserve known Notion-style paths when sail-lore.com switches to Pages.
+# Article paths lead to the local article; other pages remain on Notion.
+# Exact source paths and bare page IDs are taken from lib/content.ts.
+/35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301
+/Affordable-Loss-Spintrepreneurship-35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301
+/p/35185e50128d49fb8ec888d2802af53e /notes/affordable-loss/ 301
+/Bio-sail-coach-instructor-e6f17dac482541c1b3448bff734b3d6e https://bielski.notion.site/Bio-sail-coach-instructor-e6f17dac482541c1b3448bff734b3d6e 301
+/e6f17dac482541c1b3448bff734b3d6e https://bielski.notion.site/Bio-sail-coach-instructor-e6f17dac482541c1b3448bff734b3d6e 301
+/p/e6f17dac482541c1b3448bff734b3d6e https://bielski.notion.site/Bio-sail-coach-instructor-e6f17dac482541c1b3448bff734b3d6e 301
+/76a9a8d1f4d149f089c4ff18fcb8d87f /notes/canvas/ 301
+/Canvas-76a9a8d1f4d149f089c4ff18fcb8d87f /notes/canvas/ 301
+/p/76a9a8d1f4d149f089c4ff18fcb8d87f /notes/canvas/ 301
+/5481fb6668874533b19a2182f0250c48 /notes/happiness-equation/ 301
+/Happiness-Equation-5481fb6668874533b19a2182f0250c48 /notes/happiness-equation/ 301
+/p/5481fb6668874533b19a2182f0250c48 /notes/happiness-equation/ 301
+/Lore-x-4-e448236a3a394e30956da034c0742073 /notes/lore-x-4/ 301
+/e448236a3a394e30956da034c0742073 /notes/lore-x-4/ 301
+/p/e448236a3a394e30956da034c0742073 /notes/lore-x-4/ 301
+/R-A-C-I-ng-Roles-Rules-ab116043e4d54abc96ccd839f208da4f /notes/racing-roles/ 301
+/ab116043e4d54abc96ccd839f208da4f /notes/racing-roles/ 301
+/p/ab116043e4d54abc96ccd839f208da4f /notes/racing-roles/ 301
+/Sailing-s-3Ms-a4a566e5510946f29c5fe810380a35ea /notes/three-ms/ 301
+/a4a566e5510946f29c5fe810380a35ea /notes/three-ms/ 301
+/p/a4a566e5510946f29c5fe810380a35ea /notes/three-ms/ 301
+/Seasaurus-b722c0904a894dcf85d2e261dce66fe5 https://bielski.notion.site/Seasaurus-b722c0904a894dcf85d2e261dce66fe5 301
+/b722c0904a894dcf85d2e261dce66fe5 https://bielski.notion.site/Seasaurus-b722c0904a894dcf85d2e261dce66fe5 301
+/p/b722c0904a894dcf85d2e261dce66fe5 https://bielski.notion.site/Seasaurus-b722c0904a894dcf85d2e261dce66fe5 301
+/1b691ff5e3504fd28c6b63705224e4a5 /notes/spinthesis/ 301
+/Spinthesis-My-Dubai-Dialectic-draft-1b691ff5e3504fd28c6b63705224e4a5 /notes/spinthesis/ 301
+/p/1b691ff5e3504fd28c6b63705224e4a5 /notes/spinthesis/ 301
+/818378f6193d4e0c97161ca32c07419f /notes/call-and-callouses/ 301
+/The-Call-Callouses-of-the-Sea-818378f6193d4e0c97161ca32c07419f /notes/call-and-callouses/ 301
+/p/818378f6193d4e0c97161ca32c07419f /notes/call-and-callouses/ 301
+/75f362db7c6947179c50d0de8b66494f /notes/white-mirror/ 301
+/The-White-Mirror-75f362db7c6947179c50d0de8b66494f /notes/white-mirror/ 301
+/p/75f362db7c6947179c50d0de8b66494f /notes/white-mirror/ 301
+/879c3957e74e429ba1dd671cf36adf9a /notes/yin-yang/ 301
+/Yin-Yang-of-Work-Play-879c3957e74e429ba1dd671cf36adf9a /notes/yin-yang/ 301
+/p/879c3957e74e429ba1dd671cf36adf9a /notes/yin-yang/ 301
+/590ac78b03dd4f11adafd5317e840f0c /notes/starboard-tack/ 301
+/Your-Brain-on-Starboard-Tack-590ac78b03dd4f11adafd5317e840f0c /notes/starboard-tack/ 301
+/p/590ac78b03dd4f11adafd5317e840f0c /notes/starboard-tack/ 301
+/ZAFL-Skills-d027a5a8edbd4f099cad5e81b506a545 /notes/zafl/ 301
+/d027a5a8edbd4f099cad5e81b506a545 /notes/zafl/ 301
+/p/d027a5a8edbd4f099cad5e81b506a545 /notes/zafl/ 301
+/0a6b43707fcf424d8f6364d6da27ecec https://bielski.notion.site/p/0a6b43707fcf424d8f6364d6da27ecec 301
+/p/0a6b43707fcf424d8f6364d6da27ecec https://bielski.notion.site/p/0a6b43707fcf424d8f6364d6da27ecec 301

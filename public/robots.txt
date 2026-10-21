@@ -1,4 +1,5 @@
-# Review deploy — not the live site.
-# Remove this file when sail-lore ships for real.
+# Preview hosts are excluded from indexing by public/_headers.
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://sail-lore.com/sitemap.xml

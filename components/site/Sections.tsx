@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SITE, INTRO, LORE, SERIES, NOTES, GALLERY, WIND, CONTACT } from "@/lib/content";
 import { useReveal } from "@/lib/useReveal";
 import { useScrollRange, useSectionProgress } from "@/lib/useScrollRange";
@@ -23,7 +23,13 @@ import { WindVector, windReadout } from "./WindVector";
    Page gutter 48px. Radius 12px (16px on the large card).
    ───────────────────────────────────────────────────────────────────────── */
 
-const NAV = ["Notes", "Seasaurus", "Bio", "Services", "Contact"];
+const NAV = [
+  { label: "Notes", href: "#notes", external: false },
+  INTRO.wayfinding[2],
+  { label: "Bio", href: "#bio", external: false },
+  { ...INTRO.wayfinding[1], label: "Services" },
+  { label: "Contact", href: "#contact", external: false },
+];
 
 /** Dictionary kicker, shared by the two definition sections. Headword stays
  *  lowercase — that is how a dictionary sets it, and uppercasing it fights the
@@ -42,10 +48,17 @@ function DefKicker({ word, pron, pos, note }: { word: string; pron: string; pos:
 /** Wolverine `.c-header` — fixed, full width, h82, collapses to a 620px pill. */
 export function Header() {
   const p = useScrollRange(80, 400);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-[82px]">
+    <header className="fixed inset-x-0 top-0 z-50 h-[82px]" onKeyDown={(event) => {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+        menuButton.current?.focus();
+      }
+    }}>
       <div
-        className="mx-auto flex h-full items-center justify-between transition-all duration-500 ease-out"
+        className="relative mx-auto flex h-full items-center justify-between transition-all duration-500 ease-out"
         style={{
           width: `calc(100% - ${96 - p * 96 * 0.72}px)`,
           maxWidth: p > 0.5 ? 620 : 1416,
@@ -66,18 +79,31 @@ export function Header() {
         </a>
         {/* The measured desktop row can't fit a 390px phone, so it collapses
             to a menu affordance below md. (Playbook §4b) */}
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-7 md:flex">
           {NAV.map((n) => (
-            <a key={n} href={`#${n.toLowerCase()}`} className="whitespace-nowrap text-[15px] text-paper hover:opacity-70">
-              {n}
+            <a key={n.label} href={n.href} target={n.external ? "_blank" : undefined}
+               rel={n.external ? "noreferrer" : undefined} className="whitespace-nowrap text-[15px] text-paper hover:opacity-70">
+              {n.label}
             </a>
           ))}
         </nav>
-        <button aria-label="Open menu" className="flex flex-col gap-[4px] p-2 md:hidden">
+        <button ref={menuButton} type="button" aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen} aria-controls="mobile-navigation"
+                onClick={() => setMenuOpen(!menuOpen)} className="flex flex-col gap-[4px] p-2 md:hidden">
           <span className="block h-[2px] w-[22px] bg-paper" />
           <span className="block h-[2px] w-[22px] bg-paper" />
           <span className="block h-[2px] w-[22px] bg-paper" />
         </button>
+        <nav id="mobile-navigation" aria-label="Mobile navigation" hidden={!menuOpen}
+             className="absolute right-0 top-full mt-2 min-w-[180px] rounded-[12px] bg-abyss p-3 shadow-lg md:hidden">
+          {NAV.map((n) => (
+            <a key={n.label} href={n.href} target={n.external ? "_blank" : undefined}
+               rel={n.external ? "noreferrer" : undefined} onClick={() => setMenuOpen(false)}
+               className="block rounded px-3 py-3 text-[15px] text-paper hover:bg-white/10 focus-visible:bg-white/10">
+              {n.label}
+            </a>
+          ))}
+        </nav>
       </div>
     </header>
   );

@@ -5,9 +5,9 @@ sailing as a way of knowing — as a standalone Next.js site instead of a Notion
 
 **Live preview → https://sail-lore-review.pages.dev**
 
-> The preview ships `noindex` and a `robots.txt` disallow on purpose. It is a review
-> build, not the live site, and it should never compete with sail-lore.com in search.
-> Remove both when this becomes real — each is commented with that instruction.
+The site is prepared for `https://sail-lore.com/`, with canonical URLs and a sitemap.
+Cloudflare Pages preview hosts receive a host-specific `X-Robots-Tag: noindex`
+through `public/_headers`. See [LAUNCH.md](LAUNCH.md) for validation and the domain switch.
 
 ---
 

@@ -22,7 +22,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const note = NOTES.find((n) => n.id === id);
   if (!note) return {};
-  return { title: `${note.title} — Sail Lore`, description: note.dek };
+  return {
+    title: `${note.title} — Sail Lore`,
+    description: note.dek,
+    alternates: { canonical: `/notes/${note.id}/` },
+  };
 }
 
 export default async function NotePage({ params }: { params: Promise<{ id: string }> }) {

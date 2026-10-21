@@ -1,0 +1,7 @@
+# Keep the Pages production and branch-preview hosts out of search results.
+# These host-specific rules do not apply to sail-lore.com.
+https://sail-lore-review.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:branch.sail-lore-review.pages.dev/*
+  X-Robots-Tag: noindex, nofollow

@@ -31,6 +31,27 @@ const NAV = [
   { label: "Contact", href: "#contact", external: false },
 ];
 
+/** Keep the notes/knots wordplay legible, with a normal spoken label. */
+function NotesWord({ capitalized = false }: { capitalized?: boolean }) {
+  return (
+    <span className="whitespace-nowrap" data-notes-word>
+      <span className="sr-only">{capitalized ? "Notes" : "notes"}</span>
+      <span aria-hidden="true">
+        <span className="font-normal opacity-50">{capitalized ? "K" : "k"}</span>
+        <span className="font-semibold">not</span>
+        <span className="font-normal opacity-70">e</span>
+        <span className="font-semibold">s</span>
+      </span>
+    </span>
+  );
+}
+
+function NotesLabel({ text }: { text: string }) {
+  return <>{text.split(/\b(notes)\b/i).map((part, i) =>
+    /^notes$/i.test(part) ? <NotesWord key={i} capitalized={part[0] === "N"} /> : part,
+  )}</>;
+}
+
 /** Dictionary kicker, shared by the two definition sections. Headword stays
  *  lowercase — that is how a dictionary sets it, and uppercasing it fights the
  *  lowercase phonetic sitting between the caps. */
@@ -83,7 +104,7 @@ export function Header() {
           {NAV.map((n) => (
             <a key={n.label} href={n.href} target={n.external ? "_blank" : undefined}
                rel={n.external ? "noreferrer" : undefined} className="whitespace-nowrap text-[15px] text-paper hover:opacity-70">
-              {n.label}
+              <NotesLabel text={n.label} />
             </a>
           ))}
         </nav>
@@ -100,7 +121,7 @@ export function Header() {
             <a key={n.label} href={n.href} target={n.external ? "_blank" : undefined}
                rel={n.external ? "noreferrer" : undefined} onClick={() => setMenuOpen(false)}
                className="block rounded px-3 py-3 text-[15px] text-paper hover:bg-white/10 focus-visible:bg-white/10">
-              {n.label}
+              <NotesLabel text={n.label} />
             </a>
           ))}
         </nav>
@@ -132,7 +153,7 @@ export function Hero() {
           most valuable small type now carries the series and the count, which
           is what "& Building" wants above the fold. */}
       <span className="sl-mono absolute left-5 top-[110px] text-paper/60 md:left-10">
-        {SITE.kicker} · {NOTES.length} and counting
+        <NotesLabel text={SITE.kicker} /> · {NOTES.length} and counting
       </span>
 
       <h1 className="sl-display absolute bottom-[42%] left-5 text-paper md:bottom-[14%] md:left-10">
@@ -193,7 +214,7 @@ export function Intro() {
                 className="group border-t border-black/10 py-3 outline-none"
               >
                 <dt className="flex items-baseline gap-1.5 text-[15px] font-bold text-ink underline-offset-4 group-hover:underline group-focus-visible:underline">
-                  {w.label}
+                  <NotesLabel text={w.label} />
                   <span aria-hidden className="text-[11px] text-grey">{w.external ? "↗" : "↓"}</span>
                 </dt>
                 <dd className="mt-1 text-[15px] leading-[1.45] text-grey">{w.note}</dd>
@@ -374,7 +395,7 @@ export function SeriesCard() {
             <span className="sl-mono text-paper/60">About the series</span>
             <h2 id="series-heading" className="sl-h57 mt-4">
               {NOTES.length}
-              <span className="align-super text-[0.35em]">*</span> Notes
+              <span className="align-super text-[0.35em]">*</span>{" "}<NotesWord capitalized />
               <br />
               Apparent—& Building
             </h2>
@@ -384,9 +405,9 @@ export function SeriesCard() {
               ))}
             </div>
             <a href="#notes" className="mt-8 inline-flex w-fit items-center gap-2 text-[15px] text-paper underline underline-offset-4">
-              Read the {NOTES.length} notes <span aria-hidden>↓</span>
+              Read the {NOTES.length} <NotesWord /> <span aria-hidden>↓</span>
             </a>
-            <p className="sl-mono mt-6 text-paper/50">{SERIES.countNote}</p>
+            <p className="sl-mono mt-6 text-paper/50"><NotesLabel text={SERIES.countNote} /></p>
           </div>
         </div>
       </div>
@@ -408,7 +429,7 @@ export function Audience() {
           <p className="mt-6 max-w-[55ch] text-[clamp(19px,2vw,24px)] leading-[1.5] text-ink">{SERIES.audience[0]}</p>
         </div>
         <aside aria-labelledby="cross-fertilization-heading" className="border-t border-black/10 pt-7 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
-          <h3 id="cross-fertilization-heading" className="text-[20px] font-bold tracking-[-0.02em] text-ink">How the notes take shape</h3>
+          <h3 id="cross-fertilization-heading" className="text-[20px] font-bold tracking-[-0.02em] text-ink"><NotesLabel text="How the notes take shape" /></h3>
           <div className="mt-4 space-y-4 text-[15px] leading-[1.6] text-grey">
             <p>{SERIES.about[2]}</p>
             {SERIES.audience.slice(1).map((t) => <p key={t.slice(0, 24)}>{t}</p>)}
@@ -440,20 +461,20 @@ export function Tally() {
     ["Series", "Ongoing"],
   ];
   return (
-    <section className="border-t border-black/10 px-5 py-[7vh] md:px-12">
+    <section id="series-tally" className="border-t border-black/10 px-5 py-[7vh] md:px-12">
       <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
         <div>
           <h2 className="sl-h33 text-ink">The wind is building.</h2>
           <a href="#notes" className="mt-6 inline-flex items-center gap-2 text-[15px] text-ink underline underline-offset-4">
-            Read the notes <span aria-hidden>↓</span>
+            Read the <NotesWord /> <span aria-hidden>↓</span>
           </a>
         </div>
         <div>
           <div className="flex items-baseline justify-between border-b border-black/10 pb-4">
-            <span className="text-[15px] text-ink">{SERIES.title}</span>
+            <span className="text-[15px] text-ink"><NotesLabel text={SERIES.title} /></span>
             <span className="text-[15px] text-grey">{SITE.author}</span>
           </div>
-          <p className="sl-mono mt-10 text-right text-grey">Notes published</p>
+          <p className="sl-mono mt-10 text-right text-grey"><NotesLabel text="Notes published" /></p>
           <p className="mt-2 text-right text-[clamp(56px,8.47vw,152px)] font-bold leading-[0.79] tracking-[-0.05em] text-ink">
             {NOTES.length}
           </p>
@@ -520,7 +541,7 @@ export function NotesIndex() {
   return (
     <section id="notes" className="overflow-hidden px-5 py-[7vh] md:px-12">
       <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <h2 className="sl-h33 text-ink">The (k)notes</h2>
+        <h2 className="sl-h33 text-ink">The <NotesWord /></h2>
         {index === "rail" && (
           <div className="flex items-center gap-4">
             <button type="button" onClick={() => setI((v) => Math.max(0, v - 1))} disabled={i === 0}

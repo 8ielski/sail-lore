@@ -23,8 +23,8 @@ export function Shell({ initialNoteId = null }: { initialNoteId?: string | null 
           <ApparentWind />
           <SeriesCard />
           <NotesIndex />
-          <Audience />
           <Tally />
+          <Audience />
           <Connect />
         </main>
         <NoteOverlay />

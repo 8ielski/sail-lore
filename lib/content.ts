@@ -86,12 +86,9 @@ export const INTRO = {
 /**
  * The dictionary block.
  *
- * The display carries the THIRD sense, not the first. Three reasons: the first
- * sense was also printed verbatim in the list below it, so the page spent its
- * two loudest registers on one string; sense 3 is the only one that TAPERS to
- * a single word, which is what the staggered wedge ported from Wolverine
- * actually needs; and "workmanship" is the best word in the entry for a site
- * about craft. Swap `display` for `altDisplay` for the safer reading.
+ * The definition section presents all three senses together beneath "lore".
+ * `display` retains the third sense's original wording; its fragments are
+ * joined as a sentence rather than forced into the old staggered headline.
  */
 export const LORE = {
   word: "lore",
@@ -101,7 +98,7 @@ export const LORE = {
   display: ["something", "that is taught:", "workmanship"],
   /** Sense 2 — the safer choice, and closest to what the series actually does. */
   altDisplay: ["something", "learned through", "study or experience"],
-  /** The senses NOT on display. Nothing is repeated. */
+  /** First two meanings; the archaic third meaning is stored in display. */
   senses: [
     "a particular body of knowledge or tradition",
     "something that is learned through study or experience",

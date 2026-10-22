@@ -207,10 +207,9 @@ export function Intro() {
 }
 
 /**
- * The definition — Wolverine's ImageGalaxy, exactly.
- * h2 centred at 1017px wide, 128px, 3 staggered lines. A field of 114x114
- * tiles scattered behind it drifts up and fades on scroll (A) or holds a
- * strict grid (B). Their photographs, our drawn sails.
+ * A dictionary entry: the word leads, with three equally readable meanings.
+ * A sparse sail field preserves the visual identity without competing with
+ * the text. The notes' Rail/Grid preference only affects the notes index.
  */
 // Kept clear of the section edges (10-92%) so the field stops leaking
 // into the intro above it.
@@ -221,15 +220,13 @@ const SCATTER = [
 ];
 
 export function LoreDefinition() {
-  const { index } = usePrefs();
   const p = useScrollRange(900, 2500);
   const { ref, hidden } = useReveal<HTMLDivElement>(0.1);
 
   return (
-    <section className="relative overflow-hidden py-[10vh]">
-      {index === "rail" ? (
+    <section id="lore" aria-labelledby="lore-heading" className="relative overflow-hidden px-5 py-[10vh] md:px-12">
         <div className="pointer-events-none absolute inset-0" aria-hidden>
-          {SCATTER.map(([x, y], i) => (
+          {SCATTER.filter((_, i) => i % 4 === 0).map(([x, y], i) => (
             GALLERY.length ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -253,50 +250,37 @@ export function LoreDefinition() {
                   left: `${x}%`,
                   top: `${y}%`,
                   transform: `translate(-50%,-50%) translateY(${-p * 260}px) scale(1.1)`,
-                  opacity: Math.max(0, 1 - p * 1.5) * 0.09,
+                  opacity: Math.max(0, 1 - p * 1.5) * 0.04,
                 }}
               />
             )
           ))}
         </div>
-      ) : (
-        <div className="mx-auto mb-10 flex max-w-[1416px] flex-wrap justify-center gap-2 px-5 md:px-12">
-          {SCATTER.map((_, i) =>
-            GALLERY.length ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={i} src={GALLERY[i % GALLERY.length]} alt="" className="size-[114px] object-cover" />
-            ) : (
-              <SailGlyph key={i} rig={RIGS[i % RIGS.length]} className="size-[114px] text-ink/[0.07]" />
-            ),
-          )}
-        </div>
-      )}
 
-      <div ref={ref} data-hidden={hidden} className="sl-reveal relative mx-auto w-[1017px] max-w-[90vw]">
-        <div className="mb-6">
-          <DefKicker word={LORE.word} pron={LORE.pron} pos={LORE.pos} note={LORE.displayNote} />
+      <div ref={ref} data-hidden={hidden} className="sl-reveal relative mx-auto max-w-[880px]">
+        <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+          <h2 id="lore-heading" className="text-[clamp(48px,6vw,80px)] font-bold leading-none tracking-[-0.04em] text-ink">
+            {LORE.word}
+          </h2>
+          <p className="text-[16px] text-grey">
+            <span className="font-[family-name:var(--font-mono)]">{LORE.pron}</span>
+            <span className="mx-3" aria-hidden>·</span>
+            <span className="italic">{LORE.pos}</span>
+          </p>
         </div>
-        {/* Wolverine's wedge only resolves if the lines SHORTEN as they indent
-            ("A portfolio / built for every / step."). The first pass staggered
-            four lines that got longer, so the shape ran off the right edge and
-            never closed. This copy tapers and ends on one word. */}
-        <h2 className="sl-h2 whitespace-nowrap text-ink">
-          {LORE.display.map((l, i) => (
-            <span key={l} className="block" style={{ paddingLeft: ["0%", "20%", "38%"][i] }}>{l}</span>
-          ))}
-        </h2>
-
-        <div className="mt-14 max-w-[620px] border-t border-black/10 pt-6">
-          <p className="sl-mono mb-4 text-grey">also</p>
-          <ol className="space-y-3">
-            {LORE.senses.map((sense, i) => (
-              <li key={sense} className="flex gap-4 text-[15px] leading-[1.5] text-ink">
-                <span className="sl-mono shrink-0 pt-[3px] text-grey">{i + 1}</span>
-                <span>{sense}</span>
+        <div className="mt-7 border-t border-black/10 pt-7 md:mt-9 md:pt-9">
+          <ol className="space-y-5">
+            {[...LORE.senses, LORE.display.join(" ")].map((sense, i) => (
+              <li key={sense} className="flex gap-4 text-[clamp(19px,2vw,24px)] leading-[1.5] text-ink md:gap-6">
+                <span className="sl-mono shrink-0 pt-[7px] text-grey">{i + 1}</span>
+                <span>
+                  {i === LORE.senses.length && <span className="mr-2 text-[0.75em] italic text-grey">{LORE.displayNote}</span>}
+                  {sense}
+                </span>
               </li>
             ))}
           </ol>
-          <p className="mt-6 text-[15px] leading-[1.5] text-grey">{LORE.etymology}</p>
+          <p className="mt-8 max-w-[65ch] text-[15px] leading-[1.6] text-grey">{LORE.etymology}</p>
 
           {/* His own link, dropped in the first pass. Without it the section
               defines the word the site is named after and then dead-ends. */}

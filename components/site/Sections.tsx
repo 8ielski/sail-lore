@@ -26,7 +26,7 @@ import { WindVector, windReadout } from "./WindVector";
 const NAV = [
   { label: "Notes", href: "#notes", external: false },
   INTRO.wayfinding[2],
-  { label: "Bio", href: "#bio", external: false },
+  { label: "About", href: "#bio", external: false },
   { ...INTRO.wayfinding[1], label: "Services" },
   { label: "Contact", href: "#contact", external: false },
 ];

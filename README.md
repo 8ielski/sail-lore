@@ -51,6 +51,8 @@ npm run dev     # http://localhost:3106
 
 ## Changing the content
 
+For a short, beginner-friendly reminder, see [Changing the words](COPY-EDITING.md).
+
 **Everything readable is in [`lib/content.ts`](lib/content.ts).** One file. No CMS, no
 database. Edit it and the site changes.
 

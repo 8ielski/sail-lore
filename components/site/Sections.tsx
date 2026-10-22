@@ -152,9 +152,9 @@ export function Hero() {
       {/* Was SITE.tagline — the identical words as the h1 below it. The page's
           most valuable small type now carries the series and the count, which
           is what "& Building" wants above the fold. */}
-      <span className="sl-mono absolute left-5 top-[110px] text-paper/60 md:left-10">
-        <NotesLabel text={SITE.kicker} /> · {NOTES.length} and counting
-      </span>
+      <a href="#notes" className="sl-mono absolute left-5 top-[110px] text-paper/70 underline underline-offset-4 md:left-10">
+        {NOTES.length} <NotesLabel text={SITE.kicker} /> <span aria-hidden>↓</span>
+      </a>
 
       <h1 className="sl-display absolute bottom-[42%] left-5 text-paper md:bottom-[14%] md:left-10">
         {SITE.display.map((l) => (
@@ -373,9 +373,8 @@ export function ApparentWind() {
 }
 
 /**
- * The series card — Wolverine's LargeCard.
- * Square panel left (763x763), h2 57px right, 232px copy column bottom-left,
- * nested 305x144 r16 CTA card bottom-right.
+ * Brief series introduction, followed by the single numbered collection.
+ * The reading link appears before its target; statistics belong with cards.
  */
 export function SeriesCard() {
   const { ref, hidden } = useReveal<HTMLDivElement>(0.15);
@@ -392,12 +391,8 @@ export function SeriesCard() {
           </div>
 
           <div className="relative flex flex-col p-5 md:p-10">
-            <span className="sl-mono text-paper/60">About the series</span>
             <h2 id="series-heading" className="sl-h57 mt-4">
-              {NOTES.length}
-              <span className="align-super text-[0.35em]">*</span>{" "}<NotesWord capitalized />
-              <br />
-              Apparent—& Building
+              About the <NotesWord />
             </h2>
             <div className="mt-8 space-y-4 lg:mt-auto">
               {SERIES.about.slice(0, 2).map((t) => (
@@ -407,7 +402,6 @@ export function SeriesCard() {
             <a href="#notes" className="mt-8 inline-flex w-fit items-center gap-2 text-[15px] text-paper underline underline-offset-4">
               Read the {NOTES.length} <NotesWord /> <span aria-hidden>↓</span>
             </a>
-            <p className="sl-mono mt-6 text-paper/50"><NotesLabel text={SERIES.countNote} /></p>
           </div>
         </div>
       </div>
@@ -450,48 +444,6 @@ export function Audience() {
   );
 }
 
-/** Wolverine's MarketSnapshot: label left 33px, the big 128px figure right. */
-export function Tally() {
-  const { ref, hidden } = useReveal<HTMLDivElement>(0.2);
-  const domains = Array.from(new Set(NOTES.flatMap((n) => n.domains)));
-  const cells: [string, string][] = [
-    ["Newest", NOTES[NOTES.length - 1].title],
-    ["In draft", String(NOTES.filter((n) => n.draft).length)],
-    ["Lore domains", String(domains.length)],
-    ["Series", "Ongoing"],
-  ];
-  return (
-    <section id="series-tally" className="border-t border-black/10 px-5 py-[7vh] md:px-12">
-      <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
-        <div>
-          <h2 className="sl-h33 text-ink">The wind is building.</h2>
-          <a href="#notes" className="mt-6 inline-flex items-center gap-2 text-[15px] text-ink underline underline-offset-4">
-            Read the <NotesWord /> <span aria-hidden>↓</span>
-          </a>
-        </div>
-        <div>
-          <div className="flex items-baseline justify-between border-b border-black/10 pb-4">
-            <span className="text-[15px] text-ink"><NotesLabel text={SERIES.title} /></span>
-            <span className="text-[15px] text-grey">{SITE.author}</span>
-          </div>
-          <p className="sl-mono mt-10 text-right text-grey"><NotesLabel text="Notes published" /></p>
-          <p className="mt-2 text-right text-[clamp(56px,8.47vw,152px)] font-bold leading-[0.79] tracking-[-0.05em] text-ink">
-            {NOTES.length}
-          </p>
-          <dl className="mt-10 grid grid-cols-2 gap-6 border-t border-black/10 pt-6 lg:grid-cols-4">
-            {cells.map(([k, v]) => (
-              <div key={k}>
-                <dt className="sl-mono text-grey">{k}</dt>
-                <dd className="mt-1 text-[15px] font-bold text-ink">{v}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /**
  * The notes index — Wolverine's NewsCarousel.
  * A: 3-up rail with Prev./Next (measured 3-up at md+, 1-up on phones).
@@ -505,6 +457,13 @@ export function NotesIndex() {
   const { open, openId } = useNotesUI();
   const [i, setI] = useState(0);
   const max = Math.max(0, NOTES.length - 3);
+  const domains = new Set(NOTES.flatMap((n) => n.domains));
+  const cells = [
+    ["Newest", NOTES[NOTES.length - 1].title],
+    ["In draft", String(NOTES.filter((n) => n.draft).length)],
+    ["Lore domains", String(domains.size)],
+    ["Series", "Ongoing"],
+  ];
 
   // A real <button>, not a div with onClick: these are the only interactive
   // elements on the page and they must be reachable by keyboard.
@@ -539,9 +498,12 @@ export function NotesIndex() {
   );
 
   return (
-    <section id="notes" className="overflow-hidden px-5 py-[7vh] md:px-12">
+    <section id="notes" aria-labelledby="notes-heading" className="overflow-hidden px-5 py-[7vh] md:px-12">
+      <p className="sl-mono mb-4 text-grey">The wind is building.</p>
       <div className="flex flex-wrap items-baseline justify-between gap-4">
-        <h2 className="sl-h33 text-ink">The <NotesWord /></h2>
+        <h2 id="notes-heading" className="text-[clamp(28px,3.2vw,44px)] font-bold leading-[1.1] tracking-[-0.03em] text-ink">
+          {NOTES.length} <NotesLabel text={SERIES.title} />
+        </h2>
         {index === "rail" && (
           <div className="flex items-center gap-4">
             <button type="button" onClick={() => setI((v) => Math.max(0, v - 1))} disabled={i === 0}
@@ -551,6 +513,15 @@ export function NotesIndex() {
           </div>
         )}
       </div>
+      <p className="mt-4 text-[15px] text-grey">By {SITE.author}</p>
+      <dl className="mt-6 grid grid-cols-2 gap-6 border-y border-black/10 py-5 lg:grid-cols-4">
+        {cells.map(([label, value]) => (
+          <div key={label}>
+            <dt className="sl-mono text-grey">{label}</dt>
+            <dd className="mt-1 text-[15px] font-bold text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
 
       {index === "rail" ? (
         <div className="mt-10 flex gap-6 transition-transform duration-500 ease-out [--cardW:100%] md:[--cardW:33.333%]"

@@ -1,5 +1,5 @@
 import {
-  Header, Hero, Intro, LoreDefinition, ApparentWind, SeriesCard, Audience, Tally, NotesIndex, Connect,
+  Header, Hero, Intro, LoreDefinition, ApparentWind, SeriesCard, Audience, NotesIndex, Connect,
 } from "@/components/site/Sections";
 import { NoteOverlay } from "@/components/site/NoteView";
 import { PrefsProvider, TreatmentSwitch } from "@/lib/prefs";
@@ -23,7 +23,6 @@ export function Shell({ initialNoteId = null }: { initialNoteId?: string | null 
           <ApparentWind />
           <SeriesCard />
           <NotesIndex />
-          <Tally />
           <Audience />
           <Connect />
         </main>

@@ -139,7 +139,6 @@ export const WIND = {
 /** The series framing — "About X Notes Apparent—& Building…" */
 export const SERIES = {
   title: "Notes Apparent—& Building",
-  countNote: "The numeral preceding “Notes” reflects my current number of entries.",
   about: [
     "This section/series contains some brief attempts to explain connections, epiphanies and other ideas I’ve noted while sailing.",
     "Some came from conversations: trying to explain things to my sailing students and racing coachees, conversing with other crew members, or interacting with parts of the boat. Others originate in inner dialogues: manning 3 a.m. watches alone during crossings and even sitting on the rail while racing provided me device-free time for deep thinking.",

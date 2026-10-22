@@ -9,6 +9,7 @@ import { useNotesUI } from "@/lib/notes-ui";
 import { NoteInPlace } from "./NoteView";
 import { SailGlyph, HeroSea, RIGS } from "./Sail";
 import { WindVector, windReadout } from "./WindVector";
+import { BrandLogo, type LogoVariant } from "./BrandLogo";
 
 /* ─────────────────────────────────────────────────────────────────────────
    ADAPTED FROM wolverine-sandbox/components/landing/Sections.tsx.
@@ -70,6 +71,7 @@ function DefKicker({ word, pron, pos, note }: { word: string; pron: string; pos:
 export function Header() {
   const p = useScrollRange(80, 400);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoVariant, setLogoVariant] = useState<LogoVariant>("color");
   const menuButton = useRef<HTMLButtonElement>(null);
   return (
     <header className="fixed inset-x-0 top-0 z-50 h-[82px]" onKeyDown={(event) => {
@@ -92,11 +94,8 @@ export function Header() {
           paddingRight: 16,
         }}
       >
-        <a href="#top" className="flex items-center gap-2.5 text-paper">
-          <SailGlyph className="size-[19px] shrink-0" />
-          {p < 0.5 && (
-            <span className="whitespace-nowrap text-[13px] font-bold tracking-[0.14em]">SAIL LORE</span>
-          )}
+        <a href="#top" className="flex shrink-0 items-center text-paper">
+          <BrandLogo variant={logoVariant} className={p > 0.5 ? "h-10" : "h-[72px]"} />
         </a>
         {/* The measured desktop row can't fit a 390px phone, so it collapses
             to a menu affordance below md. (Playbook §4b) */}
@@ -125,6 +124,17 @@ export function Header() {
             </a>
           ))}
         </nav>
+      </div>
+      <div role="group" aria-label="Logo comparison" className="fixed bottom-16 left-4 right-4 z-[60] flex max-w-[380px] flex-wrap items-center gap-2 rounded-xl border border-black/15 bg-paper p-2 text-[13px] text-ink shadow-lg sm:right-auto">
+        <span className="px-1">Logo preview</span>
+        {(["color", "monochrome"] as const).map((variant) => (
+          <button key={variant} type="button" aria-pressed={logoVariant === variant}
+                  onClick={() => setLogoVariant(variant)}
+                  className={`rounded-lg px-3 py-2 ${logoVariant === variant ? "bg-ink text-paper" : "bg-black/5 text-ink"}`}>
+            {variant === "color" ? "Color" : "Monochrome"}
+          </button>
+        ))}
+        <a href="/logo-preview/" className="px-1 underline underline-offset-4">See both</a>
       </div>
     </header>
   );

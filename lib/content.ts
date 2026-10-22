@@ -143,7 +143,7 @@ export const SERIES = {
   about: [
     "This section/series contains some brief attempts to explain connections, epiphanies and other ideas I’ve noted while sailing.",
     "Some came from conversations: trying to explain things to my sailing students and racing coachees, conversing with other crew members, or interacting with parts of the boat. Others originate in inner dialogues: manning 3 a.m. watches alone during crossings and even sitting on the rail while racing provided me device-free time for deep thinking.",
-    "Also, I try to cross-fertilize and synthesize ideas from my other businesses/projects.",
+    "I try to cross-fertilize and synthesize ideas from my other businesses/projects.",
   ],
   audienceHeading: "Audience",
   audience: [

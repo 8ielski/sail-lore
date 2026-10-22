@@ -262,7 +262,7 @@ export function LoreDefinition() {
           <h2 id="lore-heading" className="text-[clamp(48px,6vw,80px)] font-bold leading-none tracking-[-0.04em] text-ink">
             {LORE.word}
           </h2>
-          <p className="text-[16px] text-grey">
+          <p className="text-[clamp(19px,2vw,24px)] leading-[1.5] text-grey">
             <span className="font-[family-name:var(--font-mono)]">{LORE.pron}</span>
             <span className="mx-3" aria-hidden>·</span>
             <span className="italic">{LORE.pos}</span>
@@ -359,7 +359,7 @@ export function ApparentWind() {
 export function SeriesCard() {
   const { ref, hidden } = useReveal<HTMLDivElement>(0.15);
   return (
-    <section className="px-4 py-[6vh]">
+    <section id="series" aria-labelledby="series-heading" className="px-4 pb-[3vh] pt-[6vh]">
       <div ref={ref} data-hidden={hidden} className="sl-reveal relative overflow-hidden rounded-[16px] bg-abyss text-paper">
         <div className="grid lg:grid-cols-[763fr_749fr]">
           <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-abyss">
@@ -372,34 +372,20 @@ export function SeriesCard() {
 
           <div className="relative flex flex-col p-5 md:p-10">
             <span className="sl-mono text-paper/60">About the series</span>
-            <h2 className="sl-h57 mt-4">
+            <h2 id="series-heading" className="sl-h57 mt-4">
               {NOTES.length}
               <span className="align-super text-[0.35em]">*</span> Notes
               <br />
               Apparent—& Building
             </h2>
             <div className="mt-8 space-y-4 lg:mt-auto">
-              {SERIES.about.map((t) => (
+              {SERIES.about.slice(0, 2).map((t) => (
                 <p key={t.slice(0, 24)} className="max-w-[46ch] text-[15px] leading-[1.5] text-paper/85">{t}</p>
               ))}
             </div>
-            <div className="mt-8 flex flex-wrap items-end gap-4">
-              {SERIES.siblings.map((s) => (
-                <a
-                  key={s.name}
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex h-[144px] w-full max-w-[305px] shrink-0 flex-col justify-between rounded-[16px] bg-white/10 p-5 transition-colors hover:bg-white/[0.16] md:w-[305px]"
-                >
-                  <span className="sl-mono text-paper/70">Cross-fertilized with</span>
-                  <span className="flex items-end justify-between gap-3">
-                    <span className="text-[20px] font-bold tracking-[-0.02em]">{s.name}</span>
-                    <span aria-hidden className="pb-1 text-[13px]">↗</span>
-                  </span>
-                </a>
-              ))}
-            </div>
+            <a href="#notes" className="mt-8 inline-flex w-fit items-center gap-2 text-[15px] text-paper underline underline-offset-4">
+              Read the {NOTES.length} notes <span aria-hidden>↓</span>
+            </a>
             <p className="sl-mono mt-6 text-paper/50">{SERIES.countNote}</p>
           </div>
         </div>
@@ -408,22 +394,36 @@ export function SeriesCard() {
   );
 }
 
-/** Second two-column block — both columns 33px/700, same as the first. */
+/** Audience first; the creative process is supporting context in a sidebar. */
 export function Audience() {
   const { ref, hidden } = useReveal<HTMLDivElement>(0.2);
   return (
-    <section className="px-5 py-[9vh] md:px-12">
-      <div ref={ref} data-hidden={hidden} className="sl-reveal grid gap-10 lg:grid-cols-2">
-        <h2 className="sl-h33 max-w-[698px] text-ink">
-          <span className="block">Written for sailors,</span>
-          <span className="block">open to landlubbers.</span>
-        </h2>
-        <div className="max-w-[578px] space-y-6">
-          <p className="sl-h33 text-ink">{SERIES.audience[0]}</p>
-          {SERIES.audience.slice(1).map((t) => (
-            <p key={t.slice(0, 24)} className="text-[15px] leading-[1.5] text-grey">{t}</p>
-          ))}
+    <section id="series-background" className="border-t border-black/10 px-5 py-[7vh] md:px-12">
+      <div ref={ref} data-hidden={hidden} className="sl-reveal mx-auto grid max-w-[1416px] gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:gap-16">
+        <div>
+          <h2 className="sl-h33 max-w-[698px] text-ink">
+            <span className="block">Written for sailors,</span>
+            <span className="block">open to landlubbers.</span>
+          </h2>
+          <p className="mt-6 max-w-[55ch] text-[clamp(19px,2vw,24px)] leading-[1.5] text-ink">{SERIES.audience[0]}</p>
         </div>
+        <aside aria-labelledby="cross-fertilization-heading" className="border-t border-black/10 pt-7 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+          <h3 id="cross-fertilization-heading" className="text-[20px] font-bold tracking-[-0.02em] text-ink">How the notes take shape</h3>
+          <div className="mt-4 space-y-4 text-[15px] leading-[1.6] text-grey">
+            <p>{SERIES.about[2]}</p>
+            {SERIES.audience.slice(1).map((t) => <p key={t.slice(0, 24)}>{t}</p>)}
+          </div>
+          <ul className="mt-6 space-y-4 border-t border-black/10 pt-5">
+            {SERIES.siblings.map((s) => (
+              <li key={s.name}>
+                <a href={s.href} target="_blank" rel="noreferrer" className="text-[15px] text-ink underline underline-offset-4">
+                  {s.name} <span aria-hidden>↗</span>
+                </a>
+                <p className="mt-1 text-[14px] leading-[1.5] text-grey">{s.line}</p>
+              </li>
+            ))}
+          </ul>
+        </aside>
       </div>
     </section>
   );

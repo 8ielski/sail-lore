@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { SITE, INTRO, LORE, SERIES, NOTES, GALLERY, WIND, CONTACT } from "@/lib/content";
+import { SITE, INTRO, LORE, SERIES, NOTES, GALLERY, WIND, CONTACT, NAV } from "@/lib/content";
 import { useReveal } from "@/lib/useReveal";
 import { useScrollRange, useSectionProgress } from "@/lib/useScrollRange";
 import { usePrefs } from "@/lib/prefs";
@@ -9,6 +9,7 @@ import { useNotesUI } from "@/lib/notes-ui";
 import { NoteInPlace } from "./NoteView";
 import { SailGlyph, HeroSea, RIGS } from "./Sail";
 import { WindVector, windReadout } from "./WindVector";
+import { NotesWord, NotesLabel } from "./NotesWord";
 
 /* ─────────────────────────────────────────────────────────────────────────
    ADAPTED FROM wolverine-sandbox/components/landing/Sections.tsx.
@@ -23,34 +24,7 @@ import { WindVector, windReadout } from "./WindVector";
    Page gutter 48px. Radius 12px (16px on the large card).
    ───────────────────────────────────────────────────────────────────────── */
 
-const NAV = [
-  { label: "Notes", href: "#notes", external: false },
-  INTRO.wayfinding[2],
-  { label: "About", href: "#bio", external: false },
-  { ...INTRO.wayfinding[1], label: "Services" },
-  { label: "Contact", href: "#contact", external: false },
-];
 
-/** Keep the notes/knots wordplay legible, with a normal spoken label. */
-function NotesWord({ capitalized = false }: { capitalized?: boolean }) {
-  return (
-    <span className="whitespace-nowrap" data-notes-word>
-      <span className="sr-only">{capitalized ? "Notes" : "notes"}</span>
-      <span aria-hidden="true">
-        <span className="font-normal opacity-50">{capitalized ? "K" : "k"}</span>
-        <span className="font-semibold">not</span>
-        <span className="font-normal opacity-70">e</span>
-        <span className="font-semibold">s</span>
-      </span>
-    </span>
-  );
-}
-
-function NotesLabel({ text }: { text: string }) {
-  return <>{text.split(/\b(notes)\b/i).map((part, i) =>
-    /^notes$/i.test(part) ? <NotesWord key={i} capitalized={part[0] === "N"} /> : part,
-  )}</>;
-}
 
 /** Dictionary kicker, shared by the two definition sections. Headword stays
  *  lowercase — that is how a dictionary sets it, and uppercasing it fights the
@@ -467,12 +441,15 @@ export function NotesIndex() {
 
   // A real <button>, not a div with onClick: these are the only interactive
   // elements on the page and they must be reachable by keyboard.
-  const Card = ({ n, idx }: { n: (typeof NOTES)[number]; idx: number }) => (
-    <button
-      type="button"
+  const Card = ({ n, idx }: { n: (typeof NOTES)[number]; idx: number }) => {
+    const Tag = n.id === "canvas" ? "a" : "button";
+    return (
+    <Tag
+      type={n.id === "canvas" ? undefined : "button"}
       data-note-id={n.id}
-      onClick={() => open(n.id)}
-      aria-expanded={openId === n.id}
+      href={n.id === "canvas" ? "/notes/canvas/" : undefined}
+      onClick={n.id === "canvas" ? undefined : () => open(n.id)}
+      aria-expanded={n.id === "canvas" ? undefined : openId === n.id}
       className="group block w-full cursor-pointer text-left outline-none"
     >
       <span className="relative flex aspect-[900/676] w-full items-center justify-center overflow-hidden rounded-[12px] bg-abyss ring-ink/60 transition-shadow group-focus-visible:ring-2">
@@ -494,8 +471,9 @@ export function NotesIndex() {
       <span className="mt-4 block text-[15px] font-bold text-ink underline-offset-4 group-hover:underline">{n.title}</span>
       <span className="mt-2 block text-[15px] leading-[1.45] text-grey">{n.dek}</span>
       <span className="sl-mono mt-3 block text-grey">{n.domains.join(" · ")}</span>
-    </button>
+    </Tag>
   );
+  };
 
   return (
     <section id="notes" aria-labelledby="notes-heading" className="overflow-hidden px-5 py-[7vh] md:px-12">

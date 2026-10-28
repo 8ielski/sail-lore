@@ -24,7 +24,7 @@ Most wording is in `lib/content.ts`. Search for a phrase you can see on the site
 | Article title, short introduction, paragraphs | The matching article in `NOTES`: `title`, `dek`, `body` |
 | Email, social links, contact wording | `CONTACT` |
 
-Exceptions: the top navigation labels (including “About”) and some buttons/headings are in `components/site/Sections.tsx`. Browser/search title and description are in `app/layout.tsx`. Ask Codex if a phrase isn't in the content file.
+Top navigation labels (including “About”) are in `NAV` in the same content file and are shared by the homepage and Canvas pilot. Exceptions: some buttons/headings are in `components/site/Sections.tsx`. Browser/search title and description are in `app/layout.tsx`. Ask Codex if a phrase isn't in the content file.
 
 The displayed number of notes is automatic. The light k/e styling is also automatic in designated headings and links; keep the underlying content word as “Notes.”
 
@@ -39,4 +39,6 @@ The displayed number of notes is automatic. The light k/e styling is also automa
 
 To undo a published edit, ask Codex to revert its commit. This creates a new checkpoint restoring the previous wording, without deleting history.
 
-Notion content is separate: changes to Notion do not automatically update this website, and changes here do not update the linked Notion pages. A CMS-style editing interface is still deferred.
+On the Canvas pilot branch, after a Notion import, Canvas’s title/body come from the reviewed snapshot. Edit those in Notion and request a refresh; the original `NOTES` paragraphs are the fallback until the first import. See [Notion publishing](NOTION-PUBLISHING.md).
+
+For the other notes, Notion content is separate: changes to Notion do not automatically update this website, and changes here do not update the linked Notion pages. A CMS-style editing interface is still deferred.

@@ -6,7 +6,9 @@
     "dev": "NODE_OPTIONS=--max-old-space-size=4096 next dev -p 3106",
     "build": "next build",
     "start": "next start -p 3106",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:notion": "node --use-env-proxy scripts/import-notion.mjs",
+    "test:import": "node --test tests/notion-import.test.mjs"
   },
   "dependencies": {
     "next": "16.2.12",

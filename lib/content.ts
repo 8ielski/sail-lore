@@ -1,3 +1,5 @@
+import canvasSnapshot from "@/content/canvas.notion.json";
+
 /**
  * Sail Lore content.
  *
@@ -83,6 +85,14 @@ export const INTRO = {
   ],
 } as const;
 
+export const NAV = [
+  { label: "Notes", href: "#notes", external: false },
+  INTRO.wayfinding[2],
+  { label: "About", href: "#bio", external: false },
+  { ...INTRO.wayfinding[1], label: "Services" },
+  { label: "Contact", href: "#contact", external: false },
+];
+
 /**
  * The dictionary block.
  *
@@ -164,6 +174,8 @@ export type Note = {
   id: string;
   /** e.g. "/media/notes/canvas.jpg" — falls back to the drawn sail when empty. */
   image?: string;
+  imageAlt?: string;
+  imageCaption?: string;
   /** The front door. Exactly one note should carry this; the hero card uses it. */
   featured?: boolean;
   /**
@@ -186,7 +198,7 @@ export type Note = {
   source: string;
 };
 
-export const NOTES: Note[] = [
+const NOTE_CONTENT: Note[] = [
   {
     id: "canvas",
     glyph: "🖼️",
@@ -467,6 +479,9 @@ export const NOTES: Note[] = [
     ],
   },
 ];
+
+const importedCanvasTitle = (canvasSnapshot as { title: string | null }).title;
+export const NOTES: Note[] = NOTE_CONTENT.map(note => note.id === "canvas" && importedCanvasTitle ? { ...note, title: importedCanvasTitle } : note);
 
 export const CONTACT = {
   heading: "Partnering? I’d love to talk.",

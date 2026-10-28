@@ -53,6 +53,8 @@ npm run dev     # http://localhost:3106
 
 For a short, beginner-friendly reminder, see [Changing the words](COPY-EDITING.md).
 
+On the Canvas pilot branch, see [Notion publishing and reading-page review](NOTION-PUBLISHING.md). The pilot does not roll out the new layout to other notes automatically.
+
 **Everything readable is in [`lib/content.ts`](lib/content.ts).** One file. No CMS, no
 database. Edit it and the site changes.
 

@@ -55,6 +55,7 @@ export function NotesUIProvider({
 
   const open = useCallback(
     (id: string) => {
+      if (id === "canvas") { window.location.assign("/notes/canvas/"); return; }
       setOpenId(id);
       if (url === "route") window.history.pushState({ noteId: id }, "", `/notes/${id}`);
     },
@@ -73,15 +74,14 @@ export function NotesUIProvider({
 
   const step = useCallback(
     (delta: 1 | -1) => {
-      setOpenId((cur) => {
-        const i = NOTES.findIndex((n) => n.id === cur);
-        if (i < 0) return cur;
-        const nextId = NOTES[(i + delta + NOTES.length) % NOTES.length].id;
-        if (url === "route") window.history.replaceState({ noteId: nextId }, "", `/notes/${nextId}`);
-        return nextId;
-      });
+      const i = NOTES.findIndex((n) => n.id === openId);
+      if (i < 0) return;
+      const nextId = NOTES[(i + delta + NOTES.length) % NOTES.length].id;
+      if (nextId === "canvas") { window.location.assign("/notes/canvas/"); return; }
+      setOpenId(nextId);
+      if (url === "route") window.history.replaceState({ noteId: nextId }, "", `/notes/${nextId}`);
     },
-    [url],
+    [url, openId],
   );
 
   return <NotesCtx.Provider value={{ openId, open, close, step }}>{children}</NotesCtx.Provider>;

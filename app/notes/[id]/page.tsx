@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NOTES } from "@/lib/content";
+import { ArticlePage } from "@/components/site/ArticlePage";
 import { Shell } from "@/components/site/Shell";
 
 /**
+ * Canvas is the standalone reading-page pilot. Other IDs retain the
+ * existing shared-link overlay presentation until that pilot is approved.
+ *
  * The cold entry for a shared note link.
  *
  * In-session, opening a note is a pushState — the server is never asked. This
@@ -31,6 +35,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function NotePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  if (!NOTES.some((n) => n.id === id)) notFound();
+  const note = NOTES.find((n) => n.id === id);
+  if (!note) notFound();
+  if (id === "canvas") return <ArticlePage note={note} />;
   return <Shell initialNoteId={id} />;
 }
